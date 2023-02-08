@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <com.example.view.MyCalendar
+        android:id="@+id/activty_my_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="30dp"
+        app:dayTextColor="#333333"
+        app:dayTextSize="17dp"
+        app:daylineSpace="25dp"
+        app:padBottom="30dp"
+        app:selectBgColor="#12cdb0"
+        app:selectRadius="15dp"
+        app:selectTextColor="@color/white"
+        app:subTitleTextColor="#cccccc"
+        app:subTitleTextSize="17dp"
+        app:subTitleVerticalSpace="8dp"
+        app:splitLineColor="#f9f9f9"
+        app:splitLineWidth="1dp"
+        app:dayPartUpOffset="6dp"
+        app:todayTipSize="11dp"/>
+
+    <TextView
+        android:id="@+id/up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="上个月"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:id="@+id/down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="下个月"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

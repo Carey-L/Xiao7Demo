@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/teal_200">
+
+    <Button
+        android:id="@+id/download_title"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/lws_download"
+        android:scaleType="centerCrop"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/message_title"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/lws_message"
+        android:scaleType="centerCrop"
+        android:layout_margin="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/edit_title"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/lws_edit"
+        android:scaleType="centerCrop"
+        android:layout_margin="5dp"
+        app:layout_constraintEnd_toStartOf="@id/message_title"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

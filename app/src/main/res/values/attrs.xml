@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--自定义日历组件-->
+    <declare-styleable name="MyCalendar">
+        <attr name="padTop" format="dimension" />                   <!-- 日期区域的上边距 -->
+        <attr name="padBottom" format="dimension" />                <!-- 日期区域的下边距 -->
+        <attr name="subTitleTextSize" format="dimension" />         <!-- 小标题字体大小 -->
+        <attr name="subTitleTextColor" format="color" />            <!-- 小标题字体颜色 -->
+        <attr name="subTitleVerticalSpace" format="dimension" />    <!-- 小标题月份上下间隔 -->
+        <attr name="splitLineColor" format="color" />               <!-- 分割线颜色 -->
+        <attr name="splitLineWidth" format="dimension" />           <!-- 分割线高度 -->
+        <attr name="dayTextSize" format="dimension" />              <!-- 日期字体大小 -->
+        <attr name="dayTextColor" format="color" />                 <!-- 日期字体颜色 -->
+        <attr name="daylineSpace" format="dimension" />             <!-- 日期行间距 -->
+        <attr name="selectTextColor" format="color" />              <!-- 选中日期字体颜色 -->
+        <attr name="selectBgColor" format="color" />                <!-- 选中日期背景-->
+        <attr name="selectRadius" format="dimension" />             <!-- 选中日期背景半径 -->
+        <attr name="dayPartUpOffset" format="dimension" />          <!-- 日期部分整体往上偏移量 -->
+        <attr name="todayTipSize" format="dimension" />             <!-- 选中日期为今天下方提示字体大小 -->
+    </declare-styleable>
+</resources>

@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Xiao7Demo" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="colorPrimary">@color/teal_200</item>-->
+        <item name="colorPrimaryVariant">@color/teal_200</item>
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+    </style>
+</resources>

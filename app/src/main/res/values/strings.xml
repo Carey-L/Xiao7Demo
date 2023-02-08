@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Xiao7Demo</string>
+    <array name="indicator_title">
+        <item>游戏</item>
+        <item>预约</item>
+        <item>收藏</item>
+    </array>
+</resources>
