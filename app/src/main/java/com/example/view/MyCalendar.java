@@ -119,7 +119,8 @@ public class MyCalendar extends View {
     /**
      * 第一行、最后一行能展示多少日期
      */
-    private int mFirstLineNum, mLastLineNum;
+    private int mFirstLineNum;
+    private int mLastLineNum;
 
     /**
      * 日期行数
