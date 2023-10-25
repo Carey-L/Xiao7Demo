@@ -40,8 +40,8 @@ public class FloatingWindowService extends Service {
     /**
      * 悬浮窗初始宽高
      */
-    private final int defaultWidth = UiUtil.dip2px(160);
-    private final int defaultHeight = UiUtil.dip2px(90);
+    private final int defaultWidth = UiUtil.dip2px(350);
+    private final int defaultHeight = UiUtil.dip2px(600);
 
     /**
      * 悬浮窗比例（width/height）
@@ -134,7 +134,7 @@ public class FloatingWindowService extends Service {
                 }
             });*/
 
-            scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
+            scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
                 private float scaleFactor = 1.0f;
 
@@ -142,21 +142,10 @@ public class FloatingWindowService extends Service {
                 public boolean onScale(ScaleGestureDetector detector) {
                     scaleFactor *= detector.getScaleFactor();
                     scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
-
-                    params.width = floatView.getWidth();
-                    params.height = floatView.getHeight();
+                    floatView.setScaleX(scaleFactor);
+                    floatView.setScaleY(scaleFactor);
                     windowManager.updateViewLayout(floatView, params);
                     return true;
-                }
-
-                @Override
-                public boolean onScaleBegin(ScaleGestureDetector detector) {
-                    return true;
-                }
-
-                @Override
-                public void onScaleEnd(ScaleGestureDetector detector) {
-
                 }
             });
 
