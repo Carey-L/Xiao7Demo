@@ -8,10 +8,11 @@ import android.widget.Toast;
 
 import com.example.R;
 import com.example.view.MyCalendar;
+import com.example.xiao7demo.BaseActivity;
 
 import java.util.Date;
 
-public class CalendarTestActivity extends AppCompatActivity {
+public class CalendarTestActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

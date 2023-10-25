@@ -5,4 +5,5 @@
         <item>预约</item>
         <item>收藏</item>
     </array>
+    <string name="float_view_background_description">测试</string>
 </resources>
