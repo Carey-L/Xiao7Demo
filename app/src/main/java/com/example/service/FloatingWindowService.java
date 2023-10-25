@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -84,8 +85,8 @@ public class FloatingWindowService extends Service {
                     PixelFormat.TRANSLUCENT
             );
             params.gravity = Gravity.BOTTOM | Gravity.END;
-            params.x = 0;
-            params.y = 0;
+            params.x = UiUtil.dip2px(5);
+            params.y = UiUtil.dip2px(5);
             params.width = defaultWidth;
             params.height = defaultHeight;
 
@@ -133,7 +134,7 @@ public class FloatingWindowService extends Service {
                 }
             });*/
 
-            scaleGestureDetector = new ScaleGestureDetector(this , new ScaleGestureDetector.OnScaleGestureListener() {
+            scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
 
                 private float scaleFactor = 1.0f;
 
