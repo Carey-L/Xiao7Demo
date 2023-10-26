@@ -47,6 +47,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private ObjectAnimator animator;
 
+    private Intent floatViewServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +118,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         message = findViewById(R.id.message_title);
         message.setOnClickListener(this);
 
+        floatViewServiceIntent = new Intent(this, FloatingWindowService.class);
+
         download = findViewById(R.id.download_title);
         download.setOnClickListener(this);
     }
@@ -138,8 +142,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else if (v == message) {
             startActivity(new Intent(this, CalendarTestActivity.class));
         } else if (v == download) {
-            Intent intent = new Intent(this, FloatingWindowService.class);
-            startService(intent);
+            stopService(floatViewServiceIntent);
+            startService(floatViewServiceIntent);
         }
     }
 
