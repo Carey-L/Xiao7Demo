@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -23,6 +22,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.util.UiUtil;
 import com.example.view.FloatView;
+
+import java.lang.reflect.Field;
 
 /**
  * 悬浮窗服务
@@ -40,8 +41,8 @@ public class FloatingWindowService extends Service {
     /**
      * 悬浮窗初始宽高
      */
-    private final int defaultWidth = UiUtil.dip2px(350);
-    private final int defaultHeight = UiUtil.dip2px(600);
+    private final int defaultWidth = UiUtil.dip2px(160);
+    private final int defaultHeight = UiUtil.dip2px(90);
 
     /**
      * 悬浮窗比例（width/height）
@@ -91,7 +92,11 @@ public class FloatingWindowService extends Service {
             params.height = defaultHeight;
 
             // 设置双指缩放手势
-            /*scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
+            scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+                private static final float SMOOTHING_FACTOR = 0.05f;
+                private float smoothedScaleFactor = 1.0f;
+
                 @Override
                 public boolean onScale(ScaleGestureDetector detector) {
                     if (Math.abs(detector.getScaleFactor() - 1) < 0.01) {
@@ -101,17 +106,8 @@ public class FloatingWindowService extends Service {
                     return true;
                 }
 
-                @Override
-                public boolean onScaleBegin(ScaleGestureDetector detector) {
-                    return true;
-                }
-
-                @Override
-                public void onScaleEnd(ScaleGestureDetector detector) {
-
-                }
-
                 public void scaleByZoom(float scale) {
+                    smoothedScaleFactor = smoothedScaleFactor + SMOOTHING_FACTOR * (scale - smoothedScaleFactor);
                     int currentWidth = params.width;
                     int targetWidth = Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (currentWidth * scale));
                     if (currentWidth == targetWidth) {
@@ -132,9 +128,9 @@ public class FloatingWindowService extends Service {
                     params.height = targetHeight;
                     windowManager.updateViewLayout(floatView, params);
                 }
-            });*/
+            });
 
-            scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            /*scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
                 private float scaleFactor = 1.0f;
 
@@ -147,7 +143,19 @@ public class FloatingWindowService extends Service {
                     windowManager.updateViewLayout(floatView, params);
                     return true;
                 }
-            });
+            });*/
+
+            // 去掉缩放的误触限制
+            try {
+                Field minSpanField = ScaleGestureDetector.class.getDeclaredField("mMinSpan");
+                Field spanSlopField = ScaleGestureDetector.class.getDeclaredField("mSpanSlop");
+                minSpanField.setAccessible(true);
+                spanSlopField.setAccessible(true);
+                minSpanField.setInt(scaleGestureDetector, 0);
+                minSpanField.setInt(scaleGestureDetector, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // 设置悬浮窗的触摸监听
             floatView.setOnTouchListener(new View.OnTouchListener() {
@@ -159,10 +167,13 @@ public class FloatingWindowService extends Service {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getPointerCount() > 1) {
+                    if (event.getPointerCount() == 2) {
                         lastRawX = -1;
                         lastRawY = -1;
                         return scaleGestureDetector.onTouchEvent(event);
+                    }
+                    if (event.getPointerCount() > 2) {
+                        return true;
                     }
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_MOVE:
