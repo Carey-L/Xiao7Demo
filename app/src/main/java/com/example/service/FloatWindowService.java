@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -21,7 +20,6 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.example.R;
 import com.example.util.UiUtil;
 import com.example.view.FloatView;
 
@@ -104,7 +102,7 @@ public class FloatWindowService extends Service {
                     if (Math.abs(detector.getScaleFactor() - 1) < 0.01) {
                         return false;
                     }
-                    initOuterFloatView();
+
                     scaleByZoom(detector.getScaleFactor());
                     return true;
                 }
@@ -116,7 +114,7 @@ public class FloatWindowService extends Service {
 
                 @Override
                 public void onScaleEnd(ScaleGestureDetector detector) {
-                    removeOuterFloatView();
+
                 }
 
                 public void scaleByZoom(float scale) {
@@ -216,7 +214,6 @@ public class FloatWindowService extends Service {
                             lastRawY = moveY;
                             return true;
                         case MotionEvent.ACTION_UP:
-                            removeOuterFloatView();
                             lastRawX = -1;
                             lastRawY = -1;
                             moved = false;
@@ -262,54 +259,6 @@ public class FloatWindowService extends Service {
             return Settings.canDrawOverlays(this);
         } else {
             return (ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_GRANTED);
-        }
-    }
-
-    WindowManager outerWindowManager;
-    WindowManager.LayoutParams outerLayoutParams;
-    View outerView;
-
-    private void initOuterFloatView() {
-        if (outerView != null) {
-            return;
-        }
-        Log.e("lws", "123");
-        if (outerWindowManager == null) {
-            // 创建并显示悬浮窗
-            outerWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        }
-        if (outerLayoutParams == null) {
-            outerLayoutParams = new WindowManager.LayoutParams(
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                            WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-            );
-            outerLayoutParams.gravity = Gravity.BOTTOM | Gravity.END;
-            outerLayoutParams.x = 0;
-            outerLayoutParams.y = 0;
-            outerLayoutParams.width = UiUtil.getDeviceDisplayMetrics().widthPixels;
-            outerLayoutParams.height = UiUtil.getDeviceDisplayMetrics().heightPixels;
-        }
-        outerView = new View(this);
-        outerView.setBackgroundColor(getResources().getColor(R.color.transparent));
-        outerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-
-        outerWindowManager.addView(outerView, outerLayoutParams);
-    }
-
-    private void removeOuterFloatView() {
-        Log.e("lws", "456");
-        if (outerWindowManager != null && outerView != null) {
-            outerWindowManager.removeViewImmediate(outerView);
-            outerView.setVisibility(View.GONE);
-            outerView = null;
         }
     }
 
