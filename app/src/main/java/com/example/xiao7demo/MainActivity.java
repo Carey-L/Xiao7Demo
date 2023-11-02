@@ -14,7 +14,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.example.R;
 import com.example.activity.CalendarTestActivity;
-import com.example.service.FloatingWindowService;
+import com.example.service.FloatWindowService;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
@@ -118,7 +118,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         message = findViewById(R.id.message_title);
         message.setOnClickListener(this);
 
-        floatViewServiceIntent = new Intent(this, FloatingWindowService.class);
+        floatViewServiceIntent = new Intent(this, FloatWindowService.class);
 
         download = findViewById(R.id.download_title);
         download.setOnClickListener(this);

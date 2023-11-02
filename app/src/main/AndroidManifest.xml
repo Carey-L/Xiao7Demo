@@ -30,7 +30,7 @@
         </activity>
 
         <service
-            android:name=".service.FloatingWindowService"
+            android:name=".service.FloatWindowService"
             android:enabled="true"
             android:exported="false" />
     </application>

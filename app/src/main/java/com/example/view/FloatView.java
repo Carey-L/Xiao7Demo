@@ -24,7 +24,7 @@ public class FloatView extends FrameLayout {
     }
 
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.floating_window_layout, this);
+        LayoutInflater.from(context).inflate(R.layout.float_window_layout, this);
     }
 
     @Override
