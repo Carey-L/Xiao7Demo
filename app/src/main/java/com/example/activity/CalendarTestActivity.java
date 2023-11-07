@@ -1,7 +1,5 @@
 package com.example.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +10,12 @@ import com.example.xiao7demo.BaseActivity;
 
 import java.util.Date;
 
+/**
+ * 日期选择 demo 界面
+ *
+ * @author laiweisheng
+ * @date 2023/11/7
+ */
 public class CalendarTestActivity extends BaseActivity {
 
     @Override

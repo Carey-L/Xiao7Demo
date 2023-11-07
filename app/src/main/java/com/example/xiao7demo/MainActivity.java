@@ -1,12 +1,16 @@
 package com.example.xiao7demo;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -14,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.example.R;
 import com.example.activity.CalendarTestActivity;
+import com.example.activity.VideoActivity;
 import com.example.service.FloatWindowService;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -43,7 +48,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private FirstRecyclerViewAdapter firstAdapter;
 
-    private Button expand, close, message, download;
+    private Button expand, close, message, download, edit;
 
     private ObjectAnimator animator;
 
@@ -119,9 +124,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         message.setOnClickListener(this);
 
         floatViewServiceIntent = new Intent(this, FloatWindowService.class);
+//        floatViewServiceIntent = new Intent(this, TestFloatWindowService.class);
 
         download = findViewById(R.id.download_title);
         download.setOnClickListener(this);
+
+        edit = findViewById(R.id.edit_title);
+        edit.setOnClickListener(this);
     }
 
     @Override
@@ -144,6 +153,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else if (v == download) {
             stopService(floatViewServiceIntent);
             startService(floatViewServiceIntent);
+        } else if (v == edit) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // 如果权限尚未授权，请求权限
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            } else {
+                // 权限已授权，执行相应操作
+                startActivity(new Intent(this, VideoActivity.class));
+            }
         }
     }
 
@@ -204,4 +221,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 用户授权了权限，可以开始访问存储
+                startActivity(new Intent(this, VideoActivity.class));
+            } else {
+                // 用户拒绝了权限请求，你需要提供适当的反馈
+            }
+        }
+    }
 }

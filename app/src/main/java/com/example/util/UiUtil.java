@@ -3,12 +3,15 @@ package com.example.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 
 public class UiUtil {
 
     private static Context mContext;
     private static Activity currentActivity;
+    private static Handler mainHandler;
 
     public static int dip2px(int dip) {
         return dip2px((float) dip);
@@ -27,10 +30,15 @@ public class UiUtil {
 
     public static void setContext(Context context) {
         UiUtil.mContext = context;
+        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     public static Context getContext() {
         return mContext;
+    }
+
+    public static Handler getMainHandler() {
+        return mainHandler;
     }
 
     public static Activity getCurrentActivity() {

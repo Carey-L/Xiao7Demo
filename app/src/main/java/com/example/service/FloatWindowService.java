@@ -1,6 +1,7 @@
 package com.example.service;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
@@ -11,11 +12,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -48,6 +53,19 @@ public class FloatWindowService extends Service {
      * 悬浮窗比例（width/height）
      */
     private final float aspectRatio = (float) 16 / 9;
+
+    /**
+     * 外层悬浮窗相关，丝滑缩放效果关键
+     */
+    private WindowManager.LayoutParams outerLayoutParams;
+    private LinearLayout outerView;
+    private ImageView outerBackgroundIv;
+
+    /**
+     * 开始缩放时，根据这个原始尺寸来计算外层悬浮窗的缩放比例
+     */
+    private int beginWidth;
+    private int beginHeight;
 
     @Override
     public void onCreate() {
@@ -82,7 +100,7 @@ public class FloatWindowService extends Service {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                             WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     PixelFormat.TRANSLUCENT
             );
             params.gravity = Gravity.BOTTOM | Gravity.END;
@@ -94,15 +112,8 @@ public class FloatWindowService extends Service {
             // 设置双指缩放手势
             scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-                private static final float SMOOTHING_FACTOR = 0.05f;
-                private float smoothedScaleFactor = 1.0f;
-
                 @Override
                 public boolean onScale(ScaleGestureDetector detector) {
-                    if (Math.abs(detector.getScaleFactor() - 1) < 0.01) {
-                        return false;
-                    }
-
                     scaleByZoom(detector.getScaleFactor());
                     return true;
                 }
@@ -114,24 +125,43 @@ public class FloatWindowService extends Service {
 
                 @Override
                 public void onScaleEnd(ScaleGestureDetector detector) {
-
                 }
 
-                public void scaleByZoom(float scale) {
-                    smoothedScaleFactor = smoothedScaleFactor + SMOOTHING_FACTOR * (scale - smoothedScaleFactor);
+                private void scaleOuter(float scaleX, float scaleY) {
+                    if (outerBackgroundIv != null) {
+                        outerBackgroundIv.setScaleX(scaleX);
+                        outerBackgroundIv.setScaleY(scaleY);
+                    }
+                }
+
+                private void scaleByZoom(float scale) {
                     int currentWidth = params.width;
-                    int targetWidth = Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (currentWidth * scale));
+                    int targetWidth = Math.max(UiUtil.dip2px(160), Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (currentWidth * scale)));
+                    if (targetWidth % 2 != 0) {
+                        targetWidth -= 1;
+                    }
+//                    int targetWidth = Math.max(UiUtil.dip2px(160), Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (beginWidth * scaleFactor * scale)));
                     if (currentWidth == targetWidth) {
                         return;
                     }
                     int currentHeight = params.height;
                     int targetHeight = (int) (targetWidth / aspectRatio);
+                    if (targetHeight % 2 != 0) {
+                        targetHeight -= 1;
+                    }
+                    scaleOuter((float) targetWidth / beginWidth, (float) targetHeight / beginHeight);
                     // 确保悬浮窗往四周缩放
                     int x = params.x - (targetWidth - currentWidth) / 2;
                     int y = params.y - (targetHeight - currentHeight) / 2;
+                    Log.e("lws", "-----------------------");
+                    Log.e("lws", "width:height=" + targetWidth + ":" + targetHeight);
+                    Log.e("lws", "originW:originH=" + outerBackgroundIv.getWidth() + ":" + outerBackgroundIv.getHeight());
+                    Log.e("lws", "scaleW:scaleH=" + outerBackgroundIv.getWidth() * outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getHeight() * outerBackgroundIv.getScaleY());
+                    Log.e("lws", "scaleX:scaleY=" + outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getScaleY());
+                    Log.e("lws", "x:y=" + x + ":" + y);
                     // 边界处理
-                    x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - targetWidth));
-                    y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - targetHeight));
+//                    x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - targetWidth));
+//                    y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - targetHeight));
                     // 更新悬浮窗位置大小
                     params.x = x;
                     params.y = y;
@@ -181,7 +211,11 @@ public class FloatWindowService extends Service {
                     if (event.getPointerCount() == 2) {
                         lastRawX = -1;
                         lastRawY = -1;
+                        initOuterFloatView();
                         return scaleGestureDetector.onTouchEvent(event);
+                    }
+                    if (event.getAction() != MotionEvent.ACTION_UP && outerBackgroundIv != null) {
+                        return true;
                     }
                     if (event.getPointerCount() > 2) {
                         return true;
@@ -203,8 +237,8 @@ public class FloatWindowService extends Service {
                             int x = params.x - deltaX;
                             int y = params.y - deltaY;
                             // 边界处理
-                            x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - v.getWidth()));
-                            y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - v.getHeight()));
+//                            x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - v.getWidth()));
+//                            y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - v.getHeight()));
                             // 更新悬浮窗位置大小
                             params.x = x;
                             params.y = y;
@@ -214,6 +248,7 @@ public class FloatWindowService extends Service {
                             lastRawY = moveY;
                             return true;
                         case MotionEvent.ACTION_UP:
+                            removeOuterFloatView();
                             lastRawX = -1;
                             lastRawY = -1;
                             moved = false;
@@ -259,6 +294,99 @@ public class FloatWindowService extends Service {
             return Settings.canDrawOverlays(this);
         } else {
             return (ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_GRANTED);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initOuterFloatView() {
+        if (outerView != null) {
+            return;
+        }
+        if (windowManager == null) {
+            return;
+        }
+        beginWidth = params.width;
+        beginHeight = params.height;
+        if (outerLayoutParams == null) {
+            outerLayoutParams = new WindowManager.LayoutParams(
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT
+            );
+            outerLayoutParams.gravity = Gravity.BOTTOM | Gravity.END;
+            outerLayoutParams.x = 0;
+            outerLayoutParams.y = 0;
+            outerLayoutParams.width = UiUtil.getDeviceDisplayMetrics().widthPixels;
+            outerLayoutParams.height = UiUtil.getDeviceDisplayMetrics().heightPixels;
+        }
+        outerView = new LinearLayout(this);
+        outerView.setOnTouchListener((v, event) -> {
+            removeOuterFloatView();
+            return false;
+        });
+
+        outerBackgroundIv = new ImageView(this);
+        LinearLayout.LayoutParams childLayoutParams = new LinearLayout.LayoutParams(params.width, params.height);
+        childLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x;
+        childLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y;
+        outerBackgroundIv.setLayoutParams(childLayoutParams);
+        outerBackgroundIv.setImageDrawable(floatView.getBackgroundIv().getDrawable());
+        outerBackgroundIv.setVisibility(View.VISIBLE);
+        outerView.addView(outerBackgroundIv);
+
+        windowManager.addView(outerView, outerLayoutParams);
+        UiUtil.getMainHandler().postDelayed(() -> {
+            if (floatView != null) {
+                floatView.setAlpha(0);
+            }
+        }, 20);
+    }
+
+    private void removeOuterFloatView() {
+        if (windowManager != null && outerView != null) {
+            if (floatView != null) {
+                floatView.setAlpha(1.0f);
+            }
+            UiUtil.getMainHandler().postDelayed(() -> {
+                if (outerView != null) {
+                    outerView.setAlpha(0);
+                    outerView.setVisibility(View.GONE);
+                    windowManager.removeView(outerView);
+                    outerView = null;
+                    outerBackgroundIv = null;
+                    UiUtil.getMainHandler().postDelayed(this::snapBackFloatView, 200);
+                }
+            }, 20);
+        } else {
+            snapBackFloatView();
+        }
+    }
+
+    /**
+     * 悬浮窗需要回弹，则开始回弹动画
+     */
+    private void snapBackFloatView() {
+        final int x = params.x;
+        final int y = params.y;
+        if (x < UiUtil.dip2px(5)
+                || y < UiUtil.dip2px(5)
+                || x > UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - floatView.getWidth()
+                || y > UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - floatView.getHeight()) {
+            // 需要进行回弹
+            int snapBackDistanceX = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - floatView.getWidth())) - x;
+            int snapBackDistanceY = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - floatView.getHeight())) - y;
+            ValueAnimator translationAnimator = ValueAnimator.ofFloat(0, 1.0f);
+            translationAnimator.setInterpolator(new DecelerateInterpolator());
+            translationAnimator.setDuration(250);
+            translationAnimator.addUpdateListener(animation -> {
+                float animatedValue = (float) animation.getAnimatedValue();
+                params.x = x + (int) (snapBackDistanceX * animatedValue);
+                params.y = y + (int) (snapBackDistanceY * animatedValue);
+                windowManager.updateViewLayout(floatView, params);
+            });
+            translationAnimator.start();
         }
     }
 
