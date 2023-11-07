@@ -154,7 +154,11 @@ public class FloatWindowService extends Service {
                     if (targetHeight % 2 != 0) {
                         targetHeight -= 1;
                     }
-                    scaleOuter((float) targetWidth / beginWidth, (float) targetHeight / beginHeight);
+                    try {
+                        scaleOuter((float) targetWidth / beginWidth, (float) targetHeight / beginHeight);
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
                     // 确保悬浮窗往四周缩放
                     int x = params.x - (targetWidth - currentWidth) / 2;
                     int y = params.y - (targetHeight - currentHeight) / 2;
