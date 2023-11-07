@@ -8,7 +8,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -25,6 +33,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.example.R;
 import com.example.util.UiUtil;
 import com.example.view.FloatView;
 
@@ -277,7 +286,7 @@ public class FloatWindowService extends Service {
                     return true;
                 }
             });
-
+            floatView.getBackgroundIv().setImageDrawable(getRoundedCornerDrawable(ContextCompat.getDrawable(this, R.drawable.float_view_background), UiUtil.dip2px(8)));
             windowManager.addView(floatView, params);
         } else {
             // 如果没有权限，跳转到系统设置界面以请求权限
@@ -350,7 +359,7 @@ public class FloatWindowService extends Service {
         childLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x;
         childLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y;
         outerBackgroundIv.setLayoutParams(childLayoutParams);
-        outerBackgroundIv.setImageDrawable(floatView.getBackgroundIv().getDrawable());
+        outerBackgroundIv.setImageDrawable(getRoundedCornerDrawable(floatView.getBackgroundIv().getDrawable(), UiUtil.dip2px(8)));
         outerBackgroundIv.setVisibility(View.VISIBLE);
         outerView.addView(outerBackgroundIv);
 
@@ -360,6 +369,31 @@ public class FloatWindowService extends Service {
                 floatView.setAlpha(0);
             }
         }, 20);
+    }
+
+    /**
+     * 把 drawable 改成圆角
+     */
+    public Drawable getRoundedCornerDrawable(Drawable originalDrawable, float radius) {
+        Drawable resultDrawable;
+        try {
+            // 把 drawable 转换成 bitmap
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) originalDrawable;
+            Bitmap originalBitmap = bitmapDrawable.getBitmap();
+            Bitmap roundedBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            // 画布
+            Canvas canvas = new Canvas(roundedBitmap);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            // 绘制圆角
+            canvas.drawRoundRect(new RectF(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight()), radius, radius, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(originalBitmap, 0, 0, paint);
+            resultDrawable = new BitmapDrawable(getResources(), roundedBitmap);
+        } catch (Exception e) {
+            resultDrawable = originalDrawable;
+        }
+        return resultDrawable;
     }
 
     private void removeOuterFloatView() {
