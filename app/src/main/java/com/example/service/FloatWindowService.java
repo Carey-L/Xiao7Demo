@@ -1,6 +1,7 @@
 package com.example.service;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -12,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -66,6 +66,11 @@ public class FloatWindowService extends Service {
      */
     private int beginWidth;
     private int beginHeight;
+
+    /**
+     * 是否在回滚状态
+     */
+    private boolean isSnapBacking = false;
 
     @Override
     public void onCreate() {
@@ -153,12 +158,12 @@ public class FloatWindowService extends Service {
                     // 确保悬浮窗往四周缩放
                     int x = params.x - (targetWidth - currentWidth) / 2;
                     int y = params.y - (targetHeight - currentHeight) / 2;
-                    Log.e("lws", "-----------------------");
-                    Log.e("lws", "width:height=" + targetWidth + ":" + targetHeight);
-                    Log.e("lws", "originW:originH=" + outerBackgroundIv.getWidth() + ":" + outerBackgroundIv.getHeight());
-                    Log.e("lws", "scaleW:scaleH=" + outerBackgroundIv.getWidth() * outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getHeight() * outerBackgroundIv.getScaleY());
-                    Log.e("lws", "scaleX:scaleY=" + outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getScaleY());
-                    Log.e("lws", "x:y=" + x + ":" + y);
+//                    Log.e("lws", "-----------------------");
+//                    Log.e("lws", "width:height=" + targetWidth + ":" + targetHeight);
+//                    Log.e("lws", "originW:originH=" + outerBackgroundIv.getWidth() + ":" + outerBackgroundIv.getHeight());
+//                    Log.e("lws", "scaleW:scaleH=" + outerBackgroundIv.getWidth() * outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getHeight() * outerBackgroundIv.getScaleY());
+//                    Log.e("lws", "scaleX:scaleY=" + outerBackgroundIv.getScaleX() + ":" + outerBackgroundIv.getScaleY());
+//                    Log.e("lws", "x:y=" + x + ":" + y);
                     // 边界处理
 //                    x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - targetWidth));
 //                    y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - targetHeight));
@@ -167,6 +172,7 @@ public class FloatWindowService extends Service {
                     params.y = y;
                     params.width = targetWidth;
                     params.height = targetHeight;
+
                     windowManager.updateViewLayout(floatView, params);
                 }
             });
@@ -208,6 +214,9 @@ public class FloatWindowService extends Service {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    if (isSnapBacking) {
+                        return true;
+                    }
                     if (event.getPointerCount() == 2) {
                         lastRawX = -1;
                         lastRawY = -1;
@@ -248,7 +257,12 @@ public class FloatWindowService extends Service {
                             lastRawY = moveY;
                             return true;
                         case MotionEvent.ACTION_UP:
-                            removeOuterFloatView();
+                            if (windowManager != null && outerView != null) {
+                                UiUtil.getMainHandler().postDelayed(() -> removeOuterFloatView(), 200);
+                            } else {
+                                isSnapBacking = true;
+                                snapBackFloatView();
+                            }
                             lastRawX = -1;
                             lastRawY = -1;
                             moved = false;
@@ -348,19 +362,18 @@ public class FloatWindowService extends Service {
         if (windowManager != null && outerView != null) {
             if (floatView != null) {
                 floatView.setAlpha(1.0f);
+                outerView.setAlpha(0);
             }
             UiUtil.getMainHandler().postDelayed(() -> {
                 if (outerView != null) {
-                    outerView.setAlpha(0);
                     outerView.setVisibility(View.GONE);
                     windowManager.removeView(outerView);
                     outerView = null;
                     outerBackgroundIv = null;
-                    UiUtil.getMainHandler().postDelayed(this::snapBackFloatView, 200);
+                    isSnapBacking = true;
+                    snapBackFloatView();
                 }
             }, 20);
-        } else {
-            snapBackFloatView();
         }
     }
 
@@ -386,7 +399,30 @@ public class FloatWindowService extends Service {
                 params.y = y + (int) (snapBackDistanceY * animatedValue);
                 windowManager.updateViewLayout(floatView, params);
             });
+            translationAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    isSnapBacking = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
             translationAnimator.start();
+        } else {
+            isSnapBacking = false;
         }
     }
 
