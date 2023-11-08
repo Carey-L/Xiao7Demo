@@ -27,8 +27,8 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import com.example.R;
 import com.example.util.UiUtil;
 import com.example.view.FloatView;
+import com.noober.background.drawable.DrawableCreator;
 
 import java.lang.reflect.Field;
 
@@ -67,8 +68,9 @@ public class FloatWindowService extends Service {
      * 外层悬浮窗相关，丝滑缩放效果关键
      */
     private WindowManager.LayoutParams outerLayoutParams;
-    private LinearLayout outerView;
+    private FrameLayout outerView;
     private ImageView outerBackgroundIv;
+    private ImageView outerBorderBackgroundTv;
 
     /**
      * 开始缩放时，根据这个原始尺寸来计算外层悬浮窗的缩放比例
@@ -148,6 +150,13 @@ public class FloatWindowService extends Service {
                     }
                 }
 
+                private void scaleBorder(float scaleX, float scaleY) {
+                    if (outerBorderBackgroundTv != null) {
+                        outerBorderBackgroundTv.setScaleX(scaleX);
+                        outerBorderBackgroundTv.setScaleY(scaleY);
+                    }
+                }
+
                 private void scaleByZoom(float scale) {
                     int currentWidth = params.width;
                     int targetWidth = Math.max(UiUtil.dip2px(160), Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (currentWidth * scale)));
@@ -164,7 +173,8 @@ public class FloatWindowService extends Service {
                         targetHeight -= 1;
                     }
                     try {
-                        scaleOuter((float) targetWidth / beginWidth, (float) targetHeight / beginHeight);
+                        scaleBorder((float) targetWidth / beginWidth, (float) targetHeight / beginHeight);
+                        scaleOuter((float) (targetWidth - UiUtil.dip2px(8)) / (beginWidth - UiUtil.dip2px(8)), (float) (targetHeight - UiUtil.dip2px(8)) / (beginHeight - UiUtil.dip2px(8)));
                     } catch (IllegalArgumentException e) {
                         return;
                     }
@@ -286,7 +296,6 @@ public class FloatWindowService extends Service {
                     return true;
                 }
             });
-            floatView.getBackgroundIv().setImageDrawable(getRoundedCornerDrawable(ContextCompat.getDrawable(this, R.drawable.float_view_background), UiUtil.dip2px(8)));
             windowManager.addView(floatView, params);
         } else {
             // 如果没有权限，跳转到系统设置界面以请求权限
@@ -348,18 +357,28 @@ public class FloatWindowService extends Service {
             outerLayoutParams.width = UiUtil.getDeviceDisplayMetrics().widthPixels;
             outerLayoutParams.height = UiUtil.getDeviceDisplayMetrics().heightPixels;
         }
-        outerView = new LinearLayout(this);
+        outerView = new FrameLayout(this);
         outerView.setOnTouchListener((v, event) -> {
             removeOuterFloatView();
             return false;
         });
 
+        outerBorderBackgroundTv = new ImageView(this);
+        FrameLayout.LayoutParams borderLayoutParams = new FrameLayout.LayoutParams(params.width, params.height);
+        borderLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x;
+        borderLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y;
+        outerBorderBackgroundTv.setLayoutParams(borderLayoutParams);
+        outerBorderBackgroundTv.setImageDrawable(getBorderDrawable(floatView.getBackgroundIv().getDrawable(), R.color.black));
+        outerBorderBackgroundTv.setVisibility(View.VISIBLE);
+        outerView.addView(outerBorderBackgroundTv);
+
         outerBackgroundIv = new ImageView(this);
-        LinearLayout.LayoutParams childLayoutParams = new LinearLayout.LayoutParams(params.width, params.height);
-        childLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x;
-        childLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y;
+        FrameLayout.LayoutParams childLayoutParams = new FrameLayout.LayoutParams(params.width - UiUtil.dip2px(8), params.height - UiUtil.dip2px(8));
+        childLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x + UiUtil.dip2px(4);
+        childLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y + UiUtil.dip2px(4);
         outerBackgroundIv.setLayoutParams(childLayoutParams);
-        outerBackgroundIv.setImageDrawable(getRoundedCornerDrawable(floatView.getBackgroundIv().getDrawable(), UiUtil.dip2px(8)));
+        outerBackgroundIv.setImageDrawable(getRoundedCornerDrawable(floatView.getBackgroundIv().getDrawable(), UiUtil.dip2px(0)));
+        outerBackgroundIv.setScaleType(ImageView.ScaleType.FIT_XY);
         outerBackgroundIv.setVisibility(View.VISIBLE);
         outerView.addView(outerBackgroundIv);
 
@@ -372,9 +391,21 @@ public class FloatWindowService extends Service {
     }
 
     /**
+     * 获取跟指定 drawable 同样宽高的 指定颜色的 drawable
+     */
+    private Drawable getBorderDrawable(Drawable originalDrawable, int color) {
+        Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
+        return new DrawableCreator.Builder()
+                .setSizeWidth(originalBitmap.getWidth())
+                .setSizeWidth(originalBitmap.getHeight())
+                .setSolidColor(UiUtil.getResources().getColor(color))
+                .build();
+    }
+
+    /**
      * 把 drawable 改成圆角
      */
-    public Drawable getRoundedCornerDrawable(Drawable originalDrawable, float radius) {
+    private Drawable getRoundedCornerDrawable(Drawable originalDrawable, float radius) {
         Drawable resultDrawable;
         try {
             // 把 drawable 转换成 bitmap
