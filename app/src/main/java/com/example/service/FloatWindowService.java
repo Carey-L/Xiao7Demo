@@ -119,7 +119,7 @@ public class FloatWindowService extends Service {
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     PixelFormat.TRANSLUCENT
             );
-            params.gravity = Gravity.BOTTOM | Gravity.END;
+            params.gravity = Gravity.TOP | Gravity.START;
             params.x = UiUtil.dip2px(5);
             params.y = UiUtil.dip2px(5);
             params.width = defaultWidth;
@@ -266,8 +266,8 @@ public class FloatWindowService extends Service {
                             if (!moved && Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
                                 return true;
                             }
-                            int x = params.x - deltaX;
-                            int y = params.y - deltaY;
+                            int x = params.x + deltaX;
+                            int y = params.y + deltaY;
                             // 边界处理
 //                            x = Math.max(UiUtil.dip2px(5), Math.min(x, UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(5) - v.getWidth()));
 //                            y = Math.max(UiUtil.dip2px(5), Math.min(y, UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - v.getHeight()));
@@ -351,11 +351,11 @@ public class FloatWindowService extends Service {
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     PixelFormat.TRANSLUCENT
             );
-            outerLayoutParams.gravity = Gravity.BOTTOM | Gravity.END;
+            outerLayoutParams.gravity = Gravity.TOP | Gravity.START;
             outerLayoutParams.x = 0;
-            outerLayoutParams.y = 0;
+            outerLayoutParams.y = -UiUtil.getStatusBarHeight();
             outerLayoutParams.width = UiUtil.getDeviceDisplayMetrics().widthPixels;
-            outerLayoutParams.height = UiUtil.getDeviceDisplayMetrics().heightPixels;
+            outerLayoutParams.height = UiUtil.getDeviceDisplayMetrics().heightPixels + UiUtil.getStatusBarHeight();
         }
         outerView = new FrameLayout(this);
         outerView.setOnTouchListener((v, event) -> {
@@ -365,8 +365,8 @@ public class FloatWindowService extends Service {
 
         outerBorderBackgroundTv = new ImageView(this);
         FrameLayout.LayoutParams borderLayoutParams = new FrameLayout.LayoutParams(params.width, params.height);
-        borderLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x;
-        borderLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y;
+        borderLayoutParams.leftMargin = params.x;
+        borderLayoutParams.topMargin = params.y + UiUtil.getStatusBarHeight();
         outerBorderBackgroundTv.setLayoutParams(borderLayoutParams);
         outerBorderBackgroundTv.setImageDrawable(getBorderDrawable(floatView.getBackgroundIv().getDrawable(), R.color.black));
         outerBorderBackgroundTv.setVisibility(View.VISIBLE);
@@ -374,8 +374,8 @@ public class FloatWindowService extends Service {
 
         outerBackgroundIv = new ImageView(this);
         FrameLayout.LayoutParams childLayoutParams = new FrameLayout.LayoutParams(params.width - UiUtil.dip2px(8), params.height - UiUtil.dip2px(8));
-        childLayoutParams.leftMargin = UiUtil.getDeviceDisplayMetrics().widthPixels - params.width - params.x + UiUtil.dip2px(4);
-        childLayoutParams.topMargin = UiUtil.getDeviceDisplayMetrics().heightPixels - params.height - params.y + UiUtil.dip2px(4);
+        childLayoutParams.leftMargin = params.x + UiUtil.dip2px(4);
+        childLayoutParams.topMargin = params.y + UiUtil.dip2px(4) + UiUtil.getStatusBarHeight();
         outerBackgroundIv.setLayoutParams(childLayoutParams);
         outerBackgroundIv.setImageDrawable(getRoundedCornerDrawable(floatView.getBackgroundIv().getDrawable(), UiUtil.dip2px(0)));
         outerBackgroundIv.setScaleType(ImageView.ScaleType.FIT_XY);
