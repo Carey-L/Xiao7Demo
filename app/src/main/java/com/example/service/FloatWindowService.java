@@ -283,7 +283,7 @@ public class FloatWindowService extends Service {
                             lastRawY = moveY;
                             return true;
                         case MotionEvent.ACTION_UP:
-                            if (windowManager != null && outerView != null) {
+                            if (outerView != null) {
                                 UiUtil.getMainHandler().postDelayed(() -> removeOuterFloatView(), 200);
                             } else {
                                 isSnapBacking = true;
@@ -437,13 +437,13 @@ public class FloatWindowService extends Service {
     }
 
     private void removeOuterFloatView() {
-        if (windowManager != null && outerView != null) {
+        if (outerView != null) {
             if (floatView != null) {
                 floatView.setAlpha(1.0f);
-                outerView.setAlpha(0);
             }
             UiUtil.getMainHandler().postDelayed(() -> {
                 if (outerView != null) {
+                    outerView.setAlpha(0);
                     outerView.setVisibility(View.GONE);
                     windowManager.removeView(outerView);
                     outerView = null;
