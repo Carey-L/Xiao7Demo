@@ -3,7 +3,6 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
     android:padding="4dp">
 
     <ImageView
@@ -11,6 +10,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/float_view_background"
         android:contentDescription="@string/float_view_background_description" />
 </FrameLayout>

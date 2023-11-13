@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -36,7 +37,6 @@ import androidx.core.content.ContextCompat;
 import com.example.R;
 import com.example.util.UiUtil;
 import com.example.view.FloatView;
-import com.noober.background.drawable.DrawableCreator;
 
 import java.lang.reflect.Field;
 
@@ -56,8 +56,8 @@ public class FloatWindowService extends Service {
     /**
      * 悬浮窗初始宽高
      */
-    private final int defaultWidth = UiUtil.dip2px(160);
-    private final int defaultHeight = UiUtil.dip2px(90);
+    private final int defaultWidth = UiUtil.dip2px(320);
+    private final int defaultHeight = UiUtil.dip2px(180);
 
     /**
      * 悬浮窗比例（width/height）
@@ -82,6 +82,8 @@ public class FloatWindowService extends Service {
      * 是否在回滚状态
      */
     private boolean isSnapBacking = false;
+
+    private boolean canZoom = false;
 
     @Override
     public void onCreate() {
@@ -130,6 +132,9 @@ public class FloatWindowService extends Service {
 
                 @Override
                 public boolean onScale(ScaleGestureDetector detector) {
+                    if (!canZoom) {
+                        return false;
+                    }
                     scaleByZoom(detector.getScaleFactor());
                     return true;
                 }
@@ -160,6 +165,7 @@ public class FloatWindowService extends Service {
                 private void scaleByZoom(float scale) {
                     int currentWidth = params.width;
                     int targetWidth = Math.max(UiUtil.dip2px(160), Math.min(UiUtil.getDeviceDisplayMetrics().widthPixels - UiUtil.dip2px(10), (int) (currentWidth * scale)));
+//                    int targetWidth = Math.min(UiUtil.dip2px(270), Math.max(UiUtil.dip2px(90), (int) (currentWidth * scale)));
                     if (targetWidth % 2 != 0) {
                         targetWidth -= 1;
                     }
@@ -240,16 +246,13 @@ public class FloatWindowService extends Service {
                     if (isSnapBacking) {
                         return true;
                     }
-                    if (event.getPointerCount() == 2) {
+                    if (event.getPointerCount() >= 2) {
                         lastRawX = -1;
                         lastRawY = -1;
                         initOuterFloatView();
                         return scaleGestureDetector.onTouchEvent(event);
                     }
                     if (event.getAction() != MotionEvent.ACTION_UP && outerBackgroundIv != null) {
-                        return true;
-                    }
-                    if (event.getPointerCount() > 2) {
                         return true;
                     }
                     switch (event.getAction()) {
@@ -286,6 +289,7 @@ public class FloatWindowService extends Service {
                                 isSnapBacking = true;
                                 snapBackFloatView();
                             }
+                            canZoom = false;
                             lastRawX = -1;
                             lastRawY = -1;
                             moved = false;
@@ -296,6 +300,8 @@ public class FloatWindowService extends Service {
                     return true;
                 }
             });
+            floatView.getRootView().setBackground(bitmapToDrawable(getRoundedCornerBitmap(generateColoredBitmap(ContextCompat.getDrawable(this, R.drawable.float_view_background), getResources().getColor(R.color.black)) , UiUtil.dip2px(36))));
+            floatView.getBackgroundIv().setImageDrawable(bitmapToDrawable(getRoundedCornerBitmap(((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.float_view_background)).getBitmap(), UiUtil.dip2px(32))));
             windowManager.addView(floatView, params);
         } else {
             // 如果没有权限，跳转到系统设置界面以请求权限
@@ -368,7 +374,8 @@ public class FloatWindowService extends Service {
         borderLayoutParams.leftMargin = params.x;
         borderLayoutParams.topMargin = params.y + UiUtil.getStatusBarHeight();
         outerBorderBackgroundTv.setLayoutParams(borderLayoutParams);
-        outerBorderBackgroundTv.setImageDrawable(getBorderDrawable(floatView.getBackgroundIv().getDrawable(), R.color.black));
+        outerBorderBackgroundTv.setImageDrawable(bitmapToDrawable(getRoundedCornerBitmap(generateColoredBitmap(floatView.getRootView().getBackground(), getResources().getColor(R.color.black)) , UiUtil.dip2px(36))));
+        outerBorderBackgroundTv.setScaleType(ImageView.ScaleType.FIT_XY);
         outerBorderBackgroundTv.setVisibility(View.VISIBLE);
         outerView.addView(outerBorderBackgroundTv);
 
@@ -377,7 +384,7 @@ public class FloatWindowService extends Service {
         childLayoutParams.leftMargin = params.x + UiUtil.dip2px(4);
         childLayoutParams.topMargin = params.y + UiUtil.dip2px(4) + UiUtil.getStatusBarHeight();
         outerBackgroundIv.setLayoutParams(childLayoutParams);
-        outerBackgroundIv.setImageDrawable(getRoundedCornerDrawable(floatView.getBackgroundIv().getDrawable(), UiUtil.dip2px(0)));
+        outerBackgroundIv.setImageDrawable(bitmapToDrawable(getRoundedCornerBitmap(((BitmapDrawable) floatView.getBackgroundIv().getDrawable()).getBitmap(), UiUtil.dip2px(0))));
         outerBackgroundIv.setScaleType(ImageView.ScaleType.FIT_XY);
         outerBackgroundIv.setVisibility(View.VISIBLE);
         outerView.addView(outerBackgroundIv);
@@ -387,44 +394,46 @@ public class FloatWindowService extends Service {
             if (floatView != null) {
                 floatView.setAlpha(0);
             }
+            canZoom = true;
         }, 20);
     }
 
     /**
-     * 获取跟指定 drawable 同样宽高的 指定颜色的 drawable
+     * 获取跟指定 drawable 同样宽高的 指定颜色的 Bitmap
      */
-    private Drawable getBorderDrawable(Drawable originalDrawable, int color) {
-        Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
-        return new DrawableCreator.Builder()
-                .setSizeWidth(originalBitmap.getWidth())
-                .setSizeWidth(originalBitmap.getHeight())
-                .setSolidColor(UiUtil.getResources().getColor(color))
-                .build();
+    private Bitmap generateColoredBitmap(Drawable originalDrawable, int color) {
+        Bitmap targetBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
+        int targetWidth = targetBitmap.getWidth();
+        int targetHeight = targetBitmap.getHeight();
+        Bitmap resultBitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(resultBitmap);
+        ColorDrawable colorDrawable = new ColorDrawable(color);
+        colorDrawable.setBounds(0, 0, targetWidth, targetHeight);
+        colorDrawable.draw(canvas);
+        return resultBitmap;
     }
 
     /**
      * 把 drawable 改成圆角
      */
-    private Drawable getRoundedCornerDrawable(Drawable originalDrawable, float radius) {
-        Drawable resultDrawable;
-        try {
-            // 把 drawable 转换成 bitmap
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) originalDrawable;
-            Bitmap originalBitmap = bitmapDrawable.getBitmap();
-            Bitmap roundedBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-            // 画布
-            Canvas canvas = new Canvas(roundedBitmap);
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-            // 绘制圆角
-            canvas.drawRoundRect(new RectF(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight()), radius, radius, paint);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(originalBitmap, 0, 0, paint);
-            resultDrawable = new BitmapDrawable(getResources(), roundedBitmap);
-        } catch (Exception e) {
-            resultDrawable = originalDrawable;
-        }
-        return resultDrawable;
+    private Bitmap getRoundedCornerBitmap(Bitmap originalBitmap, float radius) {
+        Bitmap roundedBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        // 画布
+        Canvas canvas = new Canvas(roundedBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        // 绘制圆角
+        canvas.drawRoundRect(new RectF(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight()), radius, radius, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(originalBitmap, 0, 0, paint);
+        return roundedBitmap;
+    }
+
+    /**
+     * 把 bitmap 转换成 drawable
+     */
+    private Drawable bitmapToDrawable(Bitmap bitmap) {
+        return new BitmapDrawable(getResources(), bitmap);
     }
 
     private void removeOuterFloatView() {
