@@ -395,7 +395,7 @@ public class FloatWindowService extends Service {
                 floatView.setAlpha(0);
             }
             canZoom = true;
-        }, 20);
+        }, 50);
     }
 
     /**
@@ -451,7 +451,7 @@ public class FloatWindowService extends Service {
                     isSnapBacking = true;
                     snapBackFloatView();
                 }
-            }, 20);
+            }, 50);
         }
     }
 
