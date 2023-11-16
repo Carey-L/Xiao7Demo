@@ -9,6 +9,8 @@ import android.widget.ImageView;
 
 import com.example.R;
 
+import java.lang.ref.WeakReference;
+
 /**
  * 悬浮窗布局
  *
@@ -22,8 +24,13 @@ public class FloatView extends FrameLayout {
 
     private View rootView;
     private ImageView backgroundIv;
+    private ImageView closeIv;
+
+    private boolean closeIvVisible = false;
 
     private TouchEventListener listener;
+
+    private Runnable dismissCloseIvRunnable;
 
     public FloatView(Context context) {
         super(context);
@@ -34,6 +41,13 @@ public class FloatView extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.float_window_layout, this);
         rootView = findViewById(R.id.root_view);
         backgroundIv = findViewById(R.id.background_iv);
+        closeIv = findViewById(R.id.close_iv);
+        
+        closeIv.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onClose();
+            }
+        });
     }
 
     @Override
@@ -66,6 +80,16 @@ public class FloatView extends FrameLayout {
 
     @Override
     public boolean performClick() {
+        if (dismissCloseIvRunnable == null) {
+            dismissCloseIvRunnable = new DismissCloseIvRunnable(this);
+        } else {
+            removeCallbacks(dismissCloseIvRunnable);
+        }
+        closeIvVisible = !closeIvVisible;
+        closeIv.setVisibility(closeIvVisible ? VISIBLE : GONE);
+        if (closeIvVisible) {
+            postDelayed(dismissCloseIvRunnable, 2000);
+        }
         return super.performClick();
     }
 
@@ -84,5 +108,29 @@ public class FloatView extends FrameLayout {
 
     public interface TouchEventListener {
         void onDown();
+
+        void onClose();
+    }
+
+    private static class DismissCloseIvRunnable implements Runnable {
+
+        private final WeakReference<FloatView> container;
+
+        public DismissCloseIvRunnable(FloatView floatView) {
+            container = new WeakReference<>(floatView);
+        }
+
+        @Override
+        public void run() {
+            try {
+                FloatView floatView = container.get();
+                if (floatView != null) {
+                    floatView.closeIvVisible = !floatView.closeIvVisible;
+                    floatView.closeIv.setVisibility(GONE);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.xiao7demo;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -18,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.example.R;
 import com.example.activity.CalendarTestActivity;
+import com.example.activity.MoreFunctionActivity;
 import com.example.activity.VideoActivity;
 import com.example.service.FloatWindowService;
 import com.youth.banner.Banner;
@@ -154,13 +152,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             stopService(floatViewServiceIntent);
             startService(floatViewServiceIntent);
         } else if (v == edit) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // 如果权限尚未授权，请求权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            } else {
-                // 权限已授权，执行相应操作
-                startActivity(new Intent(this, VideoActivity.class));
-            }
+            startActivity(new Intent(this, MoreFunctionActivity.class));
         }
     }
 

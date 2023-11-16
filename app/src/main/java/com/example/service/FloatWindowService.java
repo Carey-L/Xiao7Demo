@@ -233,14 +233,25 @@ public class FloatWindowService extends Service {
                 e.printStackTrace();
             }
 
+            floatView.setListener(new FloatView.TouchEventListener() {
+                @Override
+                public void onDown() {
+
+                }
+
+                @Override
+                public void onClose() {
+                    removeFloatingView();
+                }
+            });
             // 设置悬浮窗的触摸监听
             floatView.setOnTouchListener(new View.OnTouchListener() {
 
                 private int lastRawX = -1;
                 private int lastRawY = -1;
                 private boolean moved = false;
+                private boolean scaled = false;
 
-                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (isSnapBacking) {
@@ -250,6 +261,7 @@ public class FloatWindowService extends Service {
                         lastRawX = -1;
                         lastRawY = -1;
                         initOuterFloatView();
+                        scaled = true;
                         return scaleGestureDetector.onTouchEvent(event);
                     }
                     if (event.getAction() != MotionEvent.ACTION_UP && outerBackgroundIv != null) {
@@ -292,7 +304,11 @@ public class FloatWindowService extends Service {
                             canZoom = false;
                             lastRawX = -1;
                             lastRawY = -1;
+                            if (!moved && !scaled) {
+                                v.performClick();
+                            }
                             moved = false;
+                            scaled = false;
                             break;
                         default:
                             break;
@@ -306,6 +322,13 @@ public class FloatWindowService extends Service {
         } else {
             // 如果没有权限，跳转到系统设置界面以请求权限
             gotoOverlaySetting();
+        }
+    }
+
+    private void removeFloatingView() {
+        if (windowManager != null && floatView != null) {
+            windowManager.removeViewImmediate(floatView);
+            floatView = null;
         }
     }
 

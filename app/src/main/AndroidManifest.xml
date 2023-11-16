@@ -37,7 +37,14 @@
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask">
         </activity>
-
+        <activity
+            android:name=".activity.MoreFunctionActivity"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".activity.StorageTestActivity"
+            android:exported="false">
+        </activity>
         <service
             android:name=".service.FloatWindowService"
             android:enabled="true"
