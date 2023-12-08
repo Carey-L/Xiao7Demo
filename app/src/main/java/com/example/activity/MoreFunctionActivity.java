@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -50,6 +51,20 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (v == storageTestTv) {
             startActivity(new Intent(this, StorageTestActivity.class));
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 用户授权了权限，可以开始访问存储
+                startActivity(new Intent(this, VideoActivity.class));
+            } else {
+                // 用户拒绝了权限请求，你需要提供适当的反馈
+                Toast.makeText(this, "画中画需要读取本地视频文件，请在设置开启应用的存储权限", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
