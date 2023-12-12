@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private final List<FirstData> firstData = new ArrayList<>();
 
-    private final String[] firstMsgInit = new String[]{"小号回收", "小号管理", "联系客服", "绑定有礼", "邀请有奖"};
+    private final String[] firstMsgInit = new String[]{"切换语言", "小号管理", "联系客服", "绑定有礼", "邀请有奖"};
 
     private final String[] firstMsgMore = new String[]{"关于小7", "投诉反馈", "小7视频", "扫描", "设置中心"};
 

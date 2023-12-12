@@ -3,10 +3,11 @@ package com.example.xiao7demo;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,27 +47,32 @@ public class FirstRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         FirstViewHolder viewHolder = (FirstViewHolder) holder;
-        // viewHolder.button.setText(firstData.get(position).getName());
-        // 为设置中心添加清理缓存功能
-        /*if ("设置中心".equals(firstData.get(position).getName())) {
-            viewHolder.button.setOnClickListener(view -> {
-                mContext.getSharedPreferences("data", Context.MODE_PRIVATE).edit().clear().apply();
-                // mContext.deleteSharedPreferences("data");
-                // 清理缓存退出应用
-                AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-                dialog.setTitle("退出应用");
-                dialog.setMessage("缓存已清理，请重启应用！");
-                dialog.setCancelable(false);
-                dialog.setPositiveButton("确定", (dialog1, which) -> {
-                    MyApplication.getInstance().exit();
-                });
-                dialog.show();
-            });
-        } else {
-            viewHolder.button.setOnClickListener(view -> {
-                Toast.makeText(mContext, firstData.get(position).getActivity(), Toast.LENGTH_SHORT).show();
-            });
-        }*/
+        FirstData data = firstData.get(position);
+        viewHolder.view.setOnClickListener(v -> {
+            if ("切换语言".equals(data.getName())) {
+                new AlertDialog.Builder(mContext)
+                        .setTitle("切换语言")
+                        .setMessage("确定要切换语言吗？")
+                        .setPositiveButton("确定", (dialog, which) -> {
+                            // 存储用户选择的语言
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            if ("zh_CN".equals(preferences.getString("language", "zh_CN"))) {
+                                editor.putString("language", "en").commit();
+                            } else {
+                                editor.putString("language", "zh_CN").commit();
+                            }
+                            Toast.makeText(mContext, "切换语言成功", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        })
+                        .setNegativeButton("取消", (dialog, which) -> {
+                            Toast.makeText(mContext, "切换语言取消", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            } else {
+                Toast.makeText(mContext, mContext.getString(R.string.last_month), Toast.LENGTH_SHORT).show();
+            }
+        });
         ((FirstViewHolder) holder).textView.setText(firstData.get(position).getName());
     }
 

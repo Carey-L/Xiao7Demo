@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Xiao7Demo</string>
+    <array name="indicator_title">
+        <item>Playing</item>
+        <item>Subscribed</item>
+        <item>Collection</item>
+    </array>
+    <string name="float_view_background_description">Test</string>
+    <string name="last_month">Last Month</string>
+    <string name="next_month">Next Month</string>
+</resources>

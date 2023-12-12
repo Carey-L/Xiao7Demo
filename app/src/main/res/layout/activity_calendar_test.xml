@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="上个月"
+        android:text="@string/last_month"
         android:textSize="20dp"
         android:textColor="@color/black"
         android:layout_gravity="center_horizontal"/>
@@ -41,7 +41,7 @@
         android:id="@+id/down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="下个月"
+        android:text="@string/next_month"
         android:textSize="20dp"
         android:textColor="@color/black"
         android:layout_gravity="center_horizontal"/>
