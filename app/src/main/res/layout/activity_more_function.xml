@@ -38,5 +38,18 @@
             android:textSize="10dp"
             app:bl_corners_radius="10dp"
             app:bl_solid_color="@color/black" />
+
+        <TextView
+            android:id="@+id/chat_ai_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="X7ChatAI"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            app:bl_corners_radius="10dp"
+            app:bl_solid_color="@color/black" />
     </LinearLayout>
 </ScrollView>

@@ -24,6 +24,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
 
     private TextView pipTv;
     private TextView storageTestTv;
+    private TextView chatAiTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +32,14 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         setContentView(R.layout.activity_more_function);
         pipTv = findViewById(R.id.picture_in_picture_tv);
         storageTestTv = findViewById(R.id.storage_test_tv);
+        chatAiTv = findViewById(R.id.chat_ai_tv);
         initListener();
     }
 
     private void initListener() {
         pipTv.setOnClickListener(this);
         storageTestTv.setOnClickListener(this);
+        chatAiTv.setOnClickListener(this);
     }
 
     @Override
@@ -51,6 +54,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (v == storageTestTv) {
             startActivity(new Intent(this, StorageTestActivity.class));
+        } else if (v == chatAiTv) {
+            startActivity(new Intent(this, ChatAiActivity.class));
         }
     }
 
