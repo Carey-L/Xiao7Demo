@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/float_view_fold_iv"
+        android:layout_width="25dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/right_screen_shot_fl"
+        app:layout_constraintStart_toEndOf="@id/left_screen_shot_fl"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/left_screen_shot_fl"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/float_view_fold_iv"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/left_screen_shot_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/right_screen_shot_fl"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/float_view_fold_iv">
+
+        <ImageView
+            android:id="@+id/right_screen_shot_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
