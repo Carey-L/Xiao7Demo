@@ -201,9 +201,7 @@ public class FloatViewAnimationManager {
         if (!isAdheredToEdge()) {
             return;
         }
-        adhesionFloatView.getLeftScreenShotFl().setAlpha(isAdheredToEdgeLeft() ? 1.0f : 0f);
         adhesionFloatView.getLeftScreenShotFl().setVisibility(isAdheredToEdgeLeft() ? View.VISIBLE : View.GONE);
-        adhesionFloatView.getRightScreenShotFl().setAlpha(isAdheredToEdgeLeft() ? 0f : 1.0f);
         adhesionFloatView.getRightScreenShotFl().setVisibility(isAdheredToEdgeLeft() ? View.GONE : View.VISIBLE);
         adhesionFloatView.getAdhereToEdgeButtonIv().setTranslationX(0f);
         adhesionFloatView.getAdhereToEdgeButtonIv().setAlpha(1.0f);
@@ -329,7 +327,7 @@ public class FloatViewAnimationManager {
             final boolean overBottomEdge = yGameSurface > UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface;
             // 包含方向的回弹距离
             int snapBackDistanceX = adhereToLeftEdge ? -(xGameSurface + widthGameSurface) : UiUtil.getDeviceDisplayMetrics().widthPixels - xGameSurface;
-            int snapBackDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface - yGameSurface) : 0;
+            int snapBackDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             ValueAnimator translationAnimator = ValueAnimator.ofFloat(0, 1.0f);
             translationAnimator.setInterpolator(new DecelerateInterpolator());
             translationAnimator.setDuration(DRAG_FULL_GAME_SURFACE_APPEAR_DURATION_REVERSE);
@@ -500,7 +498,7 @@ public class FloatViewAnimationManager {
             final boolean leftScreenEdge = isAdheredToEdgeLeft();
             // 包含方向的回弹距离
             int gameSurfaceDistanceX = isFloatViewXInScreen() ? 0 : isAdheredToEdgeLeft() ? UiUtil.dip2px(5) - xGameSurface : UiUtil.getDeviceDisplayMetrics().widthPixels - widthGameSurface - UiUtil.dip2px(5) - xGameSurface;
-            int gameSurfaceDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface - yGameSurface) : 0;
+            int gameSurfaceDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             // 动画集
             AnimatorSet animatorSet = new AnimatorSet();
             animatorSet.setInterpolator(new DecelerateInterpolator());
@@ -552,9 +550,7 @@ public class FloatViewAnimationManager {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     try {
-                        adhesionFloatView.getLeftScreenShotFl().setAlpha(isAdheredToEdgeLeft() ? 1.0f : 0f);
                         adhesionFloatView.getLeftScreenShotFl().setVisibility(isAdheredToEdgeLeft() ? View.VISIBLE : View.GONE);
-                        adhesionFloatView.getRightScreenShotFl().setAlpha(isAdheredToEdgeLeft() ? 0f : 1.0f);
                         adhesionFloatView.getRightScreenShotFl().setVisibility(isAdheredToEdgeLeft() ? View.GONE : View.VISIBLE);
                         adhesionFloatView.getAdhereToEdgeButtonIv().setTranslationX(0f);
                         adhesionFloatView.getAdhereToEdgeButtonIv().setAlpha(1.0f);
@@ -573,9 +569,7 @@ public class FloatViewAnimationManager {
                     try {
                         // 悬浮穿参数重置
                         gameSurfaceFloatView.setAlpha(1.0f);
-                        adhesionFloatView.getLeftScreenShotFl().setAlpha(0f);
                         adhesionFloatView.getLeftScreenShotFl().setVisibility(View.GONE);
-                        adhesionFloatView.getRightScreenShotFl().setAlpha(0f);
                         adhesionFloatView.getRightScreenShotFl().setVisibility(View.GONE);
                         adhesionFloatView.getAdhereToEdgeButtonIv().setTranslationX(0f);
                         adhesionFloatView.getAdhereToEdgeButtonIv().setAlpha(0f);
