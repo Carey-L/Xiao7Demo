@@ -55,6 +55,12 @@ public class FloatViewAnimationManager {
     public static final String ADHESION_STATE_RIGHT = "1";
 
     /**
+     * 贴边悬浮窗拖动时记录的上次位置，如果在拖动的时候屏幕方向变了，要重置
+     */
+    private int lastRawX = -1;
+    private int lastRawY = -1;
+
+    /**
      * 窗口管理器
      */
     private WindowManager windowManager;
@@ -115,7 +121,9 @@ public class FloatViewAnimationManager {
             return;
         }
         // 标志位初始化
+        adhesionState = ADHESION_STATE_NONE;
         isAnimating = false;
+        initAdhesionFloatViewDragStyle = false;
         // 创建贴边悬浮窗
         adhesionFloatView = new AdhesionFloatView(context);
         adhesionParams = new WindowManager.LayoutParams(
@@ -131,11 +139,11 @@ public class FloatViewAnimationManager {
         adhesionParams.width = 0;
         adhesionParams.height = 0;
 
+        lastRawX = -1;
+        lastRawY = -1;
         adhesionFloatView.setVisibility(View.GONE);
         adhesionFloatView.setOnTouchListener(new View.OnTouchListener() {
 
-            private int lastRawX = -1;
-            private int lastRawY = -1;
             private boolean moved = false;
 
             @SuppressLint("ClickableViewAccessibility")
@@ -231,7 +239,6 @@ public class FloatViewAnimationManager {
      * 悬浮窗检测是否需要执行贴边动画
      */
     private void checkAdhereToEdge() {
-        final int xGameSurface = gameSurfaceParams.x;
         final int widthGameSurface = gameSurfaceParams.width;
         if (isAdheredToEdge()) {
             // 现在是贴边状态，则出现的尺寸为 1/3 悬浮窗大小（减去贴边按钮的宽度）
@@ -327,7 +334,9 @@ public class FloatViewAnimationManager {
             final boolean overBottomEdge = yGameSurface > UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface;
             // 包含方向的回弹距离
             int snapBackDistanceX = adhereToLeftEdge ? -(xGameSurface + widthGameSurface) : UiUtil.getDeviceDisplayMetrics().widthPixels - xGameSurface;
-            int snapBackDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
+            int snapBackDistanceY = overTopEdge ?
+                    UiUtil.dip2px(5) - yGameSurface :
+                    overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             ValueAnimator translationAnimator = ValueAnimator.ofFloat(0, 1.0f);
             translationAnimator.setInterpolator(new DecelerateInterpolator());
             translationAnimator.setDuration(DRAG_FULL_GAME_SURFACE_APPEAR_DURATION_REVERSE);
@@ -390,7 +399,9 @@ public class FloatViewAnimationManager {
             final boolean overBottomEdge = yGameSurface > UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface;
             // 包含方向的回弹距离
             int snapBackDistanceX = adhereToLeftEdge ? -(xGameSurface + widthGameSurface) : UiUtil.getDeviceDisplayMetrics().widthPixels - xGameSurface;
-            int snapBackDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface - yGameSurface : 0;
+            int snapBackDistanceY = overTopEdge ?
+                    UiUtil.dip2px(5) - yGameSurface :
+                    overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             // 动画集
             AnimatorSet animatorSet = new AnimatorSet();
             animatorSet.setInterpolator(new DecelerateInterpolator());
@@ -498,7 +509,9 @@ public class FloatViewAnimationManager {
             final boolean leftScreenEdge = isAdheredToEdgeLeft();
             // 包含方向的回弹距离
             int gameSurfaceDistanceX = isFloatViewXInScreen() ? 0 : isAdheredToEdgeLeft() ? UiUtil.dip2px(5) - xGameSurface : UiUtil.getDeviceDisplayMetrics().widthPixels - widthGameSurface - UiUtil.dip2px(5) - xGameSurface;
-            int gameSurfaceDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
+            int gameSurfaceDistanceY = overTopEdge ?
+                    UiUtil.dip2px(5) - yGameSurface :
+                    overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             // 动画集
             AnimatorSet animatorSet = new AnimatorSet();
             animatorSet.setInterpolator(new DecelerateInterpolator());
@@ -622,7 +635,9 @@ public class FloatViewAnimationManager {
             final boolean overBottomEdge = yGameSurface > UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface;
             // 包含方向的回弹距离
             int gameSurfaceDistanceX = isAdheredToEdgeLeft() ? UiUtil.dip2px(5) - xGameSurface : UiUtil.getDeviceDisplayMetrics().widthPixels - widthGameSurface - UiUtil.dip2px(5) - xGameSurface;
-            int gameSurfaceDistanceY = overTopEdge ? UiUtil.dip2px(5) - yGameSurface : overBottomEdge ? -(UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface - yGameSurface) : 0;
+            int gameSurfaceDistanceY = overTopEdge ?
+                    UiUtil.dip2px(5) - yGameSurface :
+                    overBottomEdge ? -(yGameSurface - (UiUtil.getDeviceDisplayMetrics().heightPixels - UiUtil.getStatusBarHeight() - UiUtil.dip2px(5) - heightGameSurface)) : 0;
             // 动画集
             AnimatorSet animatorSet = new AnimatorSet();
             animatorSet.setInterpolator(new DecelerateInterpolator());
