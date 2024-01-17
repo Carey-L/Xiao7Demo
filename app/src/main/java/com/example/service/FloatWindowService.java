@@ -312,7 +312,7 @@ public class FloatWindowService extends Service {
             }
         });
         gameSurfaceFloatView.getRootView().setBackground(FloatViewScreenShotUtil.getScreenShotBorderDrawable(ContextCompat.getDrawable(this, R.drawable.float_view_background), getResources().getColor(R.color.black_2f3131), UiUtil.dip2px(36)));
-        gameSurfaceFloatView.getBackgroundIv().setImageDrawable(FloatViewScreenShotUtil.getScreenShotRadiusDrawable(ContextCompat.getDrawable(this, R.drawable.float_view_background), UiUtil.dip2px(32)));
+        gameSurfaceFloatView.getBackgroundIv().setImageDrawable(FloatViewScreenShotUtil.getScreenShotRadiusDrawable(ContextCompat.getDrawable(this, R.drawable.lws_download), UiUtil.dip2px(32)));
         windowManager.addView(gameSurfaceFloatView, gameSurfaceParams);
     }
 

@@ -55,12 +55,6 @@ public class FloatViewAnimationManager {
     public static final String ADHESION_STATE_RIGHT = "1";
 
     /**
-     * 贴边悬浮窗拖动时记录的上次位置，如果在拖动的时候屏幕方向变了，要重置
-     */
-    private int lastRawX = -1;
-    private int lastRawY = -1;
-
-    /**
      * 窗口管理器
      */
     private WindowManager windowManager;
@@ -116,6 +110,7 @@ public class FloatViewAnimationManager {
     /**
      * 初始化贴边悬浮窗基本数据
      */
+    @SuppressLint("ClickableViewAccessibility")
     public void initAdhereFloatView(Context context) {
         if (windowManager == null) {
             return;
@@ -139,28 +134,28 @@ public class FloatViewAnimationManager {
         adhesionParams.width = 0;
         adhesionParams.height = 0;
 
-        lastRawX = -1;
-        lastRawY = -1;
+
         adhesionFloatView.setVisibility(View.GONE);
-        adhesionFloatView.setOnTouchListener(new View.OnTouchListener() {
+        adhesionFloatView.getAdhereToEdgeButtonIv().setOnTouchListener(new View.OnTouchListener() {
 
             private boolean moved = false;
+            private int lastRawX = -1;
+            private int lastRawY = -1;
 
-            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (isAnimating) {
                     return true;
                 }
                 switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastRawX = (int) event.getRawX();
+                        lastRawY = (int) event.getRawY();
+                        moved = false;
+                        return true;
                     case MotionEvent.ACTION_MOVE:
                         final int moveX = (int) event.getRawX();
                         final int moveY = (int) event.getRawY();
-                        if (lastRawY == -1 && lastRawX == -1) {
-                            lastRawX = moveX;
-                            lastRawY = moveY;
-                            moved = false;
-                        }
                         final int deltaX = moveX - lastRawX;
                         final int deltaY = moveY - lastRawY;
                         if (!moved && Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
@@ -188,8 +183,6 @@ public class FloatViewAnimationManager {
                         } else {
                             executeClickBackToScreenAnimation();
                         }
-                        lastRawX = -1;
-                        lastRawY = -1;
                         initAdhesionFloatViewDragStyle = false;
                         moved = false;
                         break;

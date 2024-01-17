@@ -49,36 +49,6 @@ public class AdhesionFloatView extends FrameLayout {
         rightScreenShotIv = findViewById(R.id.right_screen_shot_iv);
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                rawX = (int) ev.getRawX();
-                rawY = (int) ev.getRawY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int moveX = (int) ev.getRawX();
-                int moveY = (int) ev.getRawY();
-                // 拦截滑动事件
-                if (Math.abs(moveX - rawX) > 5 || Math.abs(moveY - rawY) > 5) {
-                    return true;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                rawX = -1;
-                rawY = -1;
-                break;
-            default:
-                break;
-        }
-        return super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
-    public boolean performClick() {
-        return super.performClick();
-    }
-
     public void setLocation(boolean isLeft) {
         adhereToEdgeButtonIv.setImageDrawable(ContextCompat.getDrawable(getContext(), isLeft ? R.drawable.float_view_left_adhesion_icon : R.drawable.float_view_right_adhesion_icon));
     }
