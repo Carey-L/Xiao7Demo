@@ -51,5 +51,57 @@
             android:textSize="10dp"
             app:bl_corners_radius="10dp"
             app:bl_solid_color="@color/black" />
+
+        <TextView
+            android:id="@+id/jump_64_plugin_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="跳转64位双开插件"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            app:bl_corners_radius="10dp"
+            app:bl_solid_color="@color/black" />
+
+        <TextView
+            android:id="@+id/jump_32_plugin_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="跳转32位双开插件"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            app:bl_corners_radius="10dp"
+            app:bl_solid_color="@color/black" />
+
+        <TextView
+            android:id="@+id/clip_parent_test_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="测试ClipParent红点实现"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            app:bl_corners_radius="10dp"
+            app:bl_solid_color="@color/black" />
+
+        <TextView
+            android:id="@+id/constraint_layout_test_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="测试ConstraintLayout红点实现"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            app:bl_corners_radius="10dp"
+            app:bl_solid_color="@color/black" />
     </LinearLayout>
 </ScrollView>

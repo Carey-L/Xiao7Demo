@@ -3,7 +3,9 @@ package com.example.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +27,10 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView pipTv;
     private TextView storageTestTv;
     private TextView chatAiTv;
+    private TextView jump64PluginTv;
+    private TextView jump32PluginTv;
+    private TextView clipParentTestTv;
+    private TextView constraintLayoutTestTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,10 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         pipTv = findViewById(R.id.picture_in_picture_tv);
         storageTestTv = findViewById(R.id.storage_test_tv);
         chatAiTv = findViewById(R.id.chat_ai_tv);
+        jump64PluginTv = findViewById(R.id.jump_64_plugin_tv);
+        jump32PluginTv = findViewById(R.id.jump_32_plugin_tv);
+        clipParentTestTv = findViewById(R.id.clip_parent_test_tv);
+        constraintLayoutTestTv = findViewById(R.id.constraint_layout_test_tv);
         initListener();
     }
 
@@ -40,22 +50,44 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         pipTv.setOnClickListener(this);
         storageTestTv.setOnClickListener(this);
         chatAiTv.setOnClickListener(this);
+        jump64PluginTv.setOnClickListener(this);
+        jump32PluginTv.setOnClickListener(this);
+        clipParentTestTv.setOnClickListener(this);
+        constraintLayoutTestTv.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v == pipTv) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // 如果权限尚未授权，请求权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            } else {
-                // 权限已授权，执行相应操作
-                startActivity(new Intent(this, VideoActivity.class));
+        try {
+            if (v == pipTv) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    // 如果权限尚未授权，请求权限
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                } else {
+                    // 权限已授权，执行相应操作
+                    startActivity(new Intent(this, VideoActivity.class));
+                }
+            } else if (v == storageTestTv) {
+                startActivity(new Intent(this, StorageTestActivity.class));
+            } else if (v == chatAiTv) {
+                startActivity(new Intent(this, ChatAiActivity.class));
+            } else if (v == jump64PluginTv) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("smwl://com.smwl.auxiliary64bit.wakeup?packageName=com.jsqq.alspzf.x7sy"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else if (v == jump32PluginTv) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("smwl://com.smwl.auxiliary32bit.wakeup?packageName=com.jsqq.alspzf.x7sy"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else if (v == clipParentTestTv) {
+                startActivity(new Intent(this, ClipParentTestActivity.class));
+            } else if (v == constraintLayoutTestTv) {
+                startActivity(new Intent(this, ConstraintLayoutTestActivity.class));
             }
-        } else if (v == storageTestTv) {
-            startActivity(new Intent(this, StorageTestActivity.class));
-        } else if (v == chatAiTv) {
-            startActivity(new Intent(this, ChatAiActivity.class));
+        } catch (Exception e) {
+            Log.e("lws", e.toString());
         }
     }
 

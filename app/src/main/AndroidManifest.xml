@@ -38,13 +38,19 @@
             android:configChanges="keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"></activity>
+            android:supportsPictureInPicture="true" />
         <activity
             android:name=".activity.MoreFunctionActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.StorageTestActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
+        <activity
+            android:name=".activity.ClipParentTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ConstraintLayoutTestActivity"
+            android:exported="false" />
 
         <service
             android:name=".service.FloatWindowService"
