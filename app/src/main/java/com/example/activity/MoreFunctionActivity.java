@@ -31,6 +31,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView jump32PluginTv;
     private TextView clipParentTestTv;
     private TextView constraintLayoutTestTv;
+    private TextView translucentActivityTestTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         jump32PluginTv = findViewById(R.id.jump_32_plugin_tv);
         clipParentTestTv = findViewById(R.id.clip_parent_test_tv);
         constraintLayoutTestTv = findViewById(R.id.constraint_layout_test_tv);
+        translucentActivityTestTv = findViewById(R.id.translucent_activity_test_tv);
         initListener();
     }
 
@@ -54,6 +56,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         jump32PluginTv.setOnClickListener(this);
         clipParentTestTv.setOnClickListener(this);
         constraintLayoutTestTv.setOnClickListener(this);
+        translucentActivityTestTv.setOnClickListener(this);
     }
 
     @Override
@@ -85,6 +88,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, ClipParentTestActivity.class));
             } else if (v == constraintLayoutTestTv) {
                 startActivity(new Intent(this, ConstraintLayoutTestActivity.class));
+            } else if (v == translucentActivityTestTv) {
+                startActivity(new Intent(this, TestTranslucentActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());

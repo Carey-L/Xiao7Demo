@@ -51,6 +51,11 @@
         <activity
             android:name=".activity.ConstraintLayoutTestActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.TestTranslucentActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <service
             android:name=".service.FloatWindowService"
