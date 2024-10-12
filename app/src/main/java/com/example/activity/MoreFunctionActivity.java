@@ -32,6 +32,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView clipParentTestTv;
     private TextView constraintLayoutTestTv;
     private TextView translucentActivityTestTv;
+    private TextView getNetworkAddressIpTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         clipParentTestTv = findViewById(R.id.clip_parent_test_tv);
         constraintLayoutTestTv = findViewById(R.id.constraint_layout_test_tv);
         translucentActivityTestTv = findViewById(R.id.translucent_activity_test_tv);
+        getNetworkAddressIpTv = findViewById(R.id.get_network_address_ip_tv);
         initListener();
     }
 
@@ -57,6 +59,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         clipParentTestTv.setOnClickListener(this);
         constraintLayoutTestTv.setOnClickListener(this);
         translucentActivityTestTv.setOnClickListener(this);
+        getNetworkAddressIpTv.setOnClickListener(this);
     }
 
     @Override
@@ -90,6 +93,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, ConstraintLayoutTestActivity.class));
             } else if (v == translucentActivityTestTv) {
                 startActivity(new Intent(this, TestTranslucentActivity.class));
+            } else if (v == getNetworkAddressIpTv) {
+                startActivity(new Intent(this, NetworkAddressIpTestActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());
