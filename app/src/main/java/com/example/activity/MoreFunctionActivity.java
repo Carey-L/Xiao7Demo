@@ -33,6 +33,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView constraintLayoutTestTv;
     private TextView translucentActivityTestTv;
     private TextView getNetworkAddressIpTv;
+    private TextView dialogWindowScreenshotTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         constraintLayoutTestTv = findViewById(R.id.constraint_layout_test_tv);
         translucentActivityTestTv = findViewById(R.id.translucent_activity_test_tv);
         getNetworkAddressIpTv = findViewById(R.id.get_network_address_ip_tv);
+        dialogWindowScreenshotTv = findViewById(R.id.dialog_window_screenshot_tv);
         initListener();
     }
 
@@ -60,6 +62,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         constraintLayoutTestTv.setOnClickListener(this);
         translucentActivityTestTv.setOnClickListener(this);
         getNetworkAddressIpTv.setOnClickListener(this);
+        dialogWindowScreenshotTv.setOnClickListener(this);
     }
 
     @Override
@@ -95,6 +98,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, TestTranslucentActivity.class));
             } else if (v == getNetworkAddressIpTv) {
                 startActivity(new Intent(this, NetworkAddressIpTestActivity.class));
+            } else if (v == dialogWindowScreenshotTv) {
+                startActivity(new Intent(this, DialogWindowActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());

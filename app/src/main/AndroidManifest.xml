@@ -36,6 +36,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.DialogWindowActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.VideoActivity"
             android:configChanges="keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
