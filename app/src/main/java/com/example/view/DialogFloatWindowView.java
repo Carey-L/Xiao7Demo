@@ -29,8 +29,8 @@ public class DialogFloatWindowView extends FrameLayout {
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.dialog_float_window_layout, this);
-        // 使用软件加速，禁用硬件加速
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        // 开启硬件加速
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
