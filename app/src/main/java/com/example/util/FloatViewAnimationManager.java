@@ -719,6 +719,7 @@ public class FloatViewAnimationManager {
         if (windowManager != null) {
             if (adhesionFloatView != null) {
                 windowManager.removeViewImmediate(adhesionFloatView);
+                adhesionFloatView = null;
             }
         }
     }
