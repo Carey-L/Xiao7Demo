@@ -34,6 +34,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView translucentActivityTestTv;
     private TextView getNetworkAddressIpTv;
     private TextView dialogWindowScreenshotTv;
+    private TextView selectAnchorScalePicTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         translucentActivityTestTv = findViewById(R.id.translucent_activity_test_tv);
         getNetworkAddressIpTv = findViewById(R.id.get_network_address_ip_tv);
         dialogWindowScreenshotTv = findViewById(R.id.dialog_window_screenshot_tv);
+        selectAnchorScalePicTv = findViewById(R.id.select_anchor_scale_pic_tv);
         initListener();
     }
 
@@ -63,6 +65,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         translucentActivityTestTv.setOnClickListener(this);
         getNetworkAddressIpTv.setOnClickListener(this);
         dialogWindowScreenshotTv.setOnClickListener(this);
+        selectAnchorScalePicTv.setOnClickListener(this);
     }
 
     @Override
@@ -100,6 +103,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, NetworkAddressIpTestActivity.class));
             } else if (v == dialogWindowScreenshotTv) {
                 startActivity(new Intent(this, DialogWindowActivity.class));
+            } else if (v == selectAnchorScalePicTv) {
+                startActivity(new Intent(this, SelectAnchorScalePicActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());

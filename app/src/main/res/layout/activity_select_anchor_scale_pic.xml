@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE">
+
+    <com.example.view.AnchorScaleImageView
+        android:id="@+id/select_anchor_scale_pic_iv"
+        android:layout_width="360dp"
+        android:layout_height="640dp"
+        android:layout_gravity="center"
+        android:background="#000000"
+        android:src="@drawable/float_view_background_port_1080x1920" />
+</FrameLayout>
