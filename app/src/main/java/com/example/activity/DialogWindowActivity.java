@@ -4,10 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.R;
 import com.example.dialog.TestWindowDialog;
+import com.example.xiao7demo.BaseActivity;
 
 /**
  * Dialog 实现悬浮窗，验证截图透明背景
@@ -15,7 +14,7 @@ import com.example.dialog.TestWindowDialog;
  * @author laiweisheng
  * @date 2024/12/2
  */
-public class DialogWindowActivity extends AppCompatActivity implements View.OnClickListener {
+public class DialogWindowActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView openTv;
     private TextView closeTv;
@@ -64,7 +63,6 @@ public class DialogWindowActivity extends AppCompatActivity implements View.OnCl
 
     /**
      * 关闭悬浮窗
-
      */
     private void closeFloatWindow() {
         if (dialog != null && dialog.isShowing()) {
