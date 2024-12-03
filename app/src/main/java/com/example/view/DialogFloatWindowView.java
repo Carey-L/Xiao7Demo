@@ -3,6 +3,7 @@ package com.example.view;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,8 @@ public class DialogFloatWindowView extends FrameLayout {
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.dialog_float_window_layout, this);
+        // 使用软件加速，禁用硬件加速
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -156,20 +157,39 @@ public class TestWindowDialog extends Dialog {
     public void screenshot() {
         // 创建一个透明背景的 Bitmap
         Bitmap bitmap = Bitmap.createBitmap(mFloatViewWindowParams.width, mFloatViewWindowParams.height, Bitmap.Config.ARGB_8888);
-        // 使用 PixelCopy 从 Window 截图
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // 使用 PixelCopy 从 Window 截图
             PixelCopy.request(getWindow(), bitmap, copyResult -> {
-                if (copyResult == PixelCopy.SUCCESS) {
-                    // 截图成功，保存 Bitmap 或做其他处理
-                    saveBitmapToFile(bitmap);
-                    // 防止到悬浮窗里
-                    floatView.setBackground(new BitmapDrawable(UiUtil.getResources(), bitmap));
-                } else {
+                if (copyResult != PixelCopy.SUCCESS) {
                     // 截图失败
-                    Log.e("PixelCopy", "Screenshot failed with result: " + copyResult);
+                    Log.e("lws", "PixelCopy Screenshot failed with result: " + copyResult);
+                    // 直接使用 View 截图
+                    captureFloatView(floatView, bitmap);
                 }
+                // 保持透明背景，PNG格式支持透明
+                saveBitmapToFile(bitmap);
+                // 防止到悬浮窗里
+                floatView.setBackground(new BitmapDrawable(UiUtil.getResources(), bitmap));
             }, mainHandler);
+        } else {
+            captureFloatView(floatView, bitmap);
+            // 保持透明背景，PNG格式支持透明
+            saveBitmapToFile(bitmap);
+            floatView.post(() -> {
+                // 防止到悬浮窗里
+                floatView.setBackground(new BitmapDrawable(UiUtil.getResources(), bitmap));
+            });
         }
+    }
+
+    /**
+     * 捕捉某个 View 的截图
+     */
+    private void captureFloatView(View targetView, Bitmap bitmap) {
+        // 把 View 绘制到 Canvas 上
+        Canvas canvas = new Canvas(bitmap);
+        // 绘制 View 到 Canvas
+        targetView.draw(canvas);
     }
 
     private void saveBitmapToFile(Bitmap bitmap) {
