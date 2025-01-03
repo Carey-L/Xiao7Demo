@@ -35,6 +35,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView getNetworkAddressIpTv;
     private TextView dialogWindowScreenshotTv;
     private TextView selectAnchorScalePicTv;
+    private TextView messengerTestTv;
+    private TextView jumpToVpnPluginTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         getNetworkAddressIpTv = findViewById(R.id.get_network_address_ip_tv);
         dialogWindowScreenshotTv = findViewById(R.id.dialog_window_screenshot_tv);
         selectAnchorScalePicTv = findViewById(R.id.select_anchor_scale_pic_tv);
+        messengerTestTv = findViewById(R.id.messenger_test_tv);
+        jumpToVpnPluginTv = findViewById(R.id.jump_to_vpn_plugin_tv);
         initListener();
     }
 
@@ -66,6 +70,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         getNetworkAddressIpTv.setOnClickListener(this);
         dialogWindowScreenshotTv.setOnClickListener(this);
         selectAnchorScalePicTv.setOnClickListener(this);
+        messengerTestTv.setOnClickListener(this);
+        jumpToVpnPluginTv.setOnClickListener(this);
     }
 
     @Override
@@ -105,6 +111,10 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, DialogWindowActivity.class));
             } else if (v == selectAnchorScalePicTv) {
                 startActivity(new Intent(this, SelectAnchorScalePicActivity.class));
+            } else if (v == messengerTestTv) {
+                startActivity(new Intent(this, MessengerTestActivity.class));
+            } else if (v == jumpToVpnPluginTv) {
+                startActivity(new Intent(this, X7VpnPluginTestActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());
