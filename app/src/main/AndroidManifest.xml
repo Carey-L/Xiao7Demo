@@ -49,6 +49,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.DomainResolveTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.X7VpnPluginTestActivity"
             android:exported="false" />
         <activity

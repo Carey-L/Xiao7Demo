@@ -37,6 +37,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
     private TextView selectAnchorScalePicTv;
     private TextView messengerTestTv;
     private TextView jumpToVpnPluginTv;
+    private TextView domainResolveTestTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         selectAnchorScalePicTv = findViewById(R.id.select_anchor_scale_pic_tv);
         messengerTestTv = findViewById(R.id.messenger_test_tv);
         jumpToVpnPluginTv = findViewById(R.id.jump_to_vpn_plugin_tv);
+        domainResolveTestTv = findViewById(R.id.domain_resolve_test_tv);
         initListener();
     }
 
@@ -72,6 +74,7 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
         selectAnchorScalePicTv.setOnClickListener(this);
         messengerTestTv.setOnClickListener(this);
         jumpToVpnPluginTv.setOnClickListener(this);
+        domainResolveTestTv.setOnClickListener(this);
     }
 
     @Override
@@ -115,6 +118,8 @@ public class MoreFunctionActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(this, MessengerTestActivity.class));
             } else if (v == jumpToVpnPluginTv) {
                 startActivity(new Intent(this, X7VpnPluginTestActivity.class));
+            } else if (v == domainResolveTestTv) {
+                startActivity(new Intent(this, DomainResolveTestActivity.class));
             }
         } catch (Exception e) {
             Log.e("lws", e.toString());
