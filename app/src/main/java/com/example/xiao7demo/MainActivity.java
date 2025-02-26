@@ -18,6 +18,7 @@ import com.example.activity.CalendarTestActivity;
 import com.example.activity.MoreFunctionActivity;
 import com.example.activity.VideoActivity;
 import com.example.service.FloatWindowService;
+import com.example.util.MemoryUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
@@ -134,6 +135,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == expand) {
+            MemoryUtil.logMemoryClass(this);
             firstAdapter.refresh(moreFirstData());
             expand.setVisibility(View.GONE);
             close.setVisibility(View.VISIBLE);
@@ -143,6 +145,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 getSharedPreferences("data", MODE_PRIVATE).edit().putBoolean("expand_flag", true).apply();
             }
         } else if (v == close) {
+            MemoryUtil.logMemoryClass(this);
             firstAdapter.refresh(getFirstData());
             close.setVisibility(View.GONE);
             expand.setVisibility(View.VISIBLE);
