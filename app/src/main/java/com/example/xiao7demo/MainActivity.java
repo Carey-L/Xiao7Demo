@@ -2,7 +2,9 @@ package com.example.xiao7demo;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,9 +18,10 @@ import com.bumptech.glide.Glide;
 import com.example.R;
 import com.example.activity.CalendarTestActivity;
 import com.example.activity.MoreFunctionActivity;
-import com.example.activity.VideoActivity;
 import com.example.service.FloatWindowService;
-import com.example.util.MemoryUtil;
+import com.example.sotest.TextMetrics;
+import com.example.util.LogUtil;
+import com.example.util.UiUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
@@ -135,7 +138,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == expand) {
-            MemoryUtil.logMemoryClass(this);
+            measureTextWidthBySo();
+            // measureTextWidth();
+            // MemoryUtil.logMemoryClass(this);
             firstAdapter.refresh(moreFirstData());
             expand.setVisibility(View.GONE);
             close.setVisibility(View.VISIBLE);
@@ -145,7 +150,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 getSharedPreferences("data", MODE_PRIVATE).edit().putBoolean("expand_flag", true).apply();
             }
         } else if (v == close) {
-            MemoryUtil.logMemoryClass(this);
+            measureTextWidthBySo();
+            // measureTextWidth();
+            // MemoryUtil.logMemoryClass(this);
             firstAdapter.refresh(getFirstData());
             close.setVisibility(View.GONE);
             expand.setVisibility(View.VISIBLE);
@@ -157,6 +164,70 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else if (v == edit) {
             startActivity(new Intent(this, MoreFunctionActivity.class));
         }
+    }
+
+    private void measureTextWidthBySo() {
+        /*TextMetrics.getTextWidth("游戏加载中", 16);
+        TextMetrics.getTextWidth("Loading Game", 16);
+        TextMetrics.getTextWidth("ゲームロード中", 16);
+        TextMetrics.getTextWidth("Đang tải trò chơi", 16);
+        TextMetrics.getTextWidth("اللعبة قيد التحميل", 16);
+        TextMetrics.getTextWidth("เกมกําลังโหลด", 16);
+        LogUtil.e("lws--test -------------------------------------------------------");
+
+        TextMetrics.getTextWidth("游戏加载中", UiUtil.dip2px(16));
+        TextMetrics.getTextWidth("Loading Game", UiUtil.dip2px(16));
+        TextMetrics.getTextWidth("ゲームロード中", UiUtil.dip2px(16));
+        TextMetrics.getTextWidth("Đang tải trò chơi", UiUtil.dip2px(16));
+        TextMetrics.getTextWidth("اللعبة قيد التحميل", UiUtil.dip2px(16));
+        TextMetrics.getTextWidth("เกมกําลังโหลด", UiUtil.dip2px(16));
+        LogUtil.e("lws--test -------------------------------------------------------");*/
+
+        TextMetrics.getTextWidthWithFont(this, "游戏加载中", 8, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "Loading Game", 8, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "ゲームロード中", 8, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "Đang tải trò chơi", 8, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "اللعبة قيد التحميل", 8, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "เกมกําลังโหลด", 8, "myfont.ttf");
+        LogUtil.e("lws--test -------------------------------------------------------");
+
+        TextMetrics.getTextWidthWithFont(this, "游戏加载中", 32f, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "Loading Game", 23f, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "ゲームロード中", 23f, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "Đang tải trò chơi", 20f, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "اللعبة قيد التحميل", 22f, "myfont.ttf");
+        TextMetrics.getTextWidthWithFont(this, "เกมกําลังโหลด", 27f, "myfont.ttf");
+        LogUtil.e("lws--test -------------------------------------------------------");
+    }
+
+    private void measureTextWidth() {
+        Paint paint = new Paint();
+
+        paint.setTextSize(16);
+        paint.setTypeface(Typeface.DEFAULT);
+        LogUtil.d(String.format("lws--test 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "游戏加载中", 16, paint.measureText("游戏加载中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "Loading Game", 16, paint.measureText("Loading Game"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "ゲームロード中", 16, paint.measureText("ゲームロード中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "Đang tải trò chơi", 16, paint.measureText("Đang tải trò chơi"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.e("lws--test -------------------------------------------------------");
+
+        paint.setTextSize(UiUtil.dip2px(16));
+        paint.setTypeface(Typeface.DEFAULT);
+        LogUtil.d(String.format("lws--test method1 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "游戏加载中", UiUtil.dip2px(16), paint.measureText("游戏加载中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method1 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "Loading Game", UiUtil.dip2px(16), paint.measureText("Loading Game"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method1 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "ゲームロード中", UiUtil.dip2px(16), paint.measureText("ゲームロード中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method1 文本：%1$s，字号：%2$spx，宽度：%3$s，高度：%4$s", "Đang tải trò chơi", UiUtil.dip2px(16), paint.measureText("Đang tải trò chơi"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.e("lws--test -------------------------------------------------------");
+
+        paint.setTextSize(UiUtil.dip2px(16));
+        paint.setTypeface(Typeface.createFromAsset(getAssets(), "myfont.ttf"));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "游戏加载中", UiUtil.dip2px(16), paint.measureText("游戏加载中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "Loading Game", UiUtil.dip2px(16), paint.measureText("Loading Game"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "ゲームロード中", UiUtil.dip2px(16), paint.measureText("ゲームロード中"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "Đang tải trò chơi", UiUtil.dip2px(16), paint.measureText("Đang tải trò chơi"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "اللعبة قيد التحميل", UiUtil.dip2px(16), paint.measureText("اللعبة قيد التحميل"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.d(String.format("lws--test method2 文本：%1$s，字号：%2$spx，宽度：%3$s, 高度：%4$s", "เกมกําลังโหลด", UiUtil.dip2px(16), paint.measureText("เกมกําลังโหลด"), paint.getFontMetrics().bottom - paint.getFontMetrics().top));
+        LogUtil.e("lws--test -------------------------------------------------------");
     }
 
     /*@Override
